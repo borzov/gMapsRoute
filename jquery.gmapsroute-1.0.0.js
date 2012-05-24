@@ -11,33 +11,36 @@
 	$.fn.gMapsRoute = function(options) {
 
 		// Default settings
-		var defaults = {
-			contRoute:		'#showroute',
-			latitude:		0,
-			longitude:		0,
-			zoom:			16,
-			markerTitle:	'Title',
-			markerText:		'Text...'
+		var settings = {
+			idRoute:	'#showroute',
+			latitude:	22,
+			longitude:	22,
+			zoom:		16,
+			mTitle:		'',
+			mText:		''
 		}
-
-		// Build main options before element iteration
-		var options = $.extend(defaults, options);
     	
 		// Iterate through each element
-		this.each(function() {
+		return this.each(function() {
+		
+			// Merge settings if options exist before element iteration
+			if (options) {
+				$.extend(settings, options);
+			}
+		
 			// Notice the ordering of latitude and longitude
-			home = new google.maps.LatLng(options.latitude, options.longitude);
+			home = new google.maps.LatLng(settings.latitude, settings.longitude);
 			
 			// Creates a new instance of a DirectionsService that sends directions queries to Google servers
 			service = new google.maps.DirectionsService();
 			
 			// Creates a new map inside of the given HTML container, which is typically a DIV element
 			map = new google.maps.Map(this, {
-				zoom: 				options.zoom,
-				center: 			home,
-				mapTypeId: 			google.maps.MapTypeId.HYBRID,
-				streetViewControl:	false,
-				scrollwheel:		true
+				zoom: settings.zoom,
+				center: home,
+				mapTypeId: google.maps.MapTypeId.HYBRID,
+				streetViewControl: false,
+				scrollwheel: true
 			});
 			
 			// Creates the renderer with the given options
@@ -52,7 +55,7 @@
 			marker = new google.maps.Marker({
 				position: home,
 				map: map,
-				title: options.markerTitle
+				title: settings.mTitle
 			});
 
 			// Show InfoWindow()
@@ -63,15 +66,15 @@
 			
 			// Set event at marker click
 			google.maps.event.addListener(marker, 'click', function() {
-				openWindow(marker, options.markerText);
+				openWindow(marker, settings.mText);
 			});
 			
 			// Show InfoWindow() on init
-			openWindow(marker, options.markerText);
+			openWindow(marker, settings.mText);
 			
 			// Is browser support HTML 5 Geolocation API?
 			if (navigator.geolocation) {
-				showroute = $('#showroute').css('display', 'inline-block');
+				showroute = $(settings.idRoute).css('display', 'inline-block');
 				// Set event at route generator button
 				$(showroute).bind('click', function(event) {
 					event.preventDefault();
