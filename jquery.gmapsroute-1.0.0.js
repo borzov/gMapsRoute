@@ -20,12 +20,14 @@
 			map: {
 				// Default point
 				coords: {
-					lat:	0,
-					lon:	0,
+					lat:		0,
+					lon:		0,
 				},
-				type:		google.maps.MapTypeId.HYBRID,
-				scroll:		true,
-				zoom:		15
+				typeControl:	true,
+				type:			google.maps.MapTypeId.HYBRID,
+				scroll:			true,
+				zoom:			15,
+				zoomControl:	true
 			},
 			// Text labels by default
 			text: {
@@ -39,7 +41,7 @@
 				
 			}
 		}
-    	
+
 		// Iterate through each element
 		return this.each(function() {
 		
@@ -56,11 +58,16 @@
 			
 			// Creates a new map inside of the given HTML container, which is typically a DIV element
 			map = new google.maps.Map(this, {
-				zoom: settings.map.zoom,
 				center: home,
+				mapTypeControl: settings.map.typeControl,
 				mapTypeId: settings.map.type,
+				panControl: false,
+				rotateControl: false,
 				streetViewControl: false,
-				scrollwheel: settings.map.scroll
+				scaleControl: false,
+				scrollwheel: settings.map.scroll,
+				zoom: settings.map.zoom,
+				zoomControl: settings.map.zoomControl
 			});
 			
 			// Creates the renderer with the given options
@@ -80,6 +87,8 @@
 
 			// Show InfoWindow()
 			var openWindow = function (marker, text) {
+				popup.disableAutoPan = false;
+				popup.maxWidth = 300;
 				popup.setContent(text);
 				popup.open(map, marker);
 			}
