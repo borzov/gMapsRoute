@@ -14,6 +14,8 @@
 		var settings = {
 			// Route button (also displays status after click)
 			idRoute:	'#showroute',
+			// Show balloon on load?
+			showPopup:	true,
 			// Google Maps settings — https://developers.google.com/maps/documentation/javascript/reference#MapOptions
 			map: {
 				// Default point
@@ -88,7 +90,9 @@
 			});
 			
 			// Show InfoWindow() on init
-			openWindow(marker, settings.text.markerText);
+			if (settings.showPopup) {
+				openWindow(marker, settings.text.markerText);
+			}
 			
 			// Is browser support HTML 5 Geolocation API?
 			if (navigator.geolocation) {
