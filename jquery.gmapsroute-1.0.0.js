@@ -12,12 +12,30 @@
 
 		// Default settings
 		var settings = {
+			// Route button (also displays status after click)
 			idRoute:	'#showroute',
-			latitude:	22,
-			longitude:	22,
-			zoom:		16,
-			mTitle:		'',
-			mText:		''
+			// Google Maps settings — https://developers.google.com/maps/documentation/javascript/reference#MapOptions
+			map: {
+				// Default point
+				coords: {
+					lat:	0,
+					lon:	0,
+				},
+				type:		google.maps.MapTypeId.HYBRID,
+				scroll:		true,
+				zoom:		15
+			},
+			// Text labels by default
+			text: {
+				// Marker texts
+				markerTitle:	'',
+				markerText: 	'',
+				// Rout button texts
+				routeMake:		'Make a route',
+				routeReady:		'The route is ready',
+				routeError:		'Unable to make a route'
+				
+			}
 		}
     	
 		// Iterate through each element
@@ -25,22 +43,22 @@
 		
 			// Merge settings if options exist before element iteration
 			if (options) {
-				$.extend(settings, options);
+				$.extend(true, settings, options);
 			}
 		
 			// Notice the ordering of latitude and longitude
-			home = new google.maps.LatLng(settings.latitude, settings.longitude);
+			home = new google.maps.LatLng(settings.map.coords.lat, settings.map.coords.lon);
 			
 			// Creates a new instance of a DirectionsService that sends directions queries to Google servers
 			service = new google.maps.DirectionsService();
 			
 			// Creates a new map inside of the given HTML container, which is typically a DIV element
 			map = new google.maps.Map(this, {
-				zoom: settings.zoom,
+				zoom: settings.map.zoom,
 				center: home,
-				mapTypeId: google.maps.MapTypeId.HYBRID,
+				mapTypeId: settings.map.type,
 				streetViewControl: false,
-				scrollwheel: true
+				scrollwheel: settings.map.scroll
 			});
 			
 			// Creates the renderer with the given options
@@ -55,7 +73,7 @@
 			marker = new google.maps.Marker({
 				position: home,
 				map: map,
-				title: settings.mTitle
+				title: settings.text.markerTitle
 			});
 
 			// Show InfoWindow()
@@ -66,11 +84,11 @@
 			
 			// Set event at marker click
 			google.maps.event.addListener(marker, 'click', function() {
-				openWindow(marker, settings.mText);
+				openWindow(marker, settings.text.markerText);
 			});
 			
 			// Show InfoWindow() on init
-			openWindow(marker, settings.mText);
+			openWindow(marker, settings.text.markerText);
 			
 			// Is browser support HTML 5 Geolocation API?
 			if (navigator.geolocation) {
@@ -106,12 +124,12 @@
 							addInstructions(marker, route.steps[i].instructions);
 						}
 						map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
-						setStatus('Маршрут готов', function() {
+						setStatus(settings.text.routeReady, function() {
 							$(showroute).addClass('hide');
 						});
 					} else {
-						setStatus('Невозможно проложить маршрут', function() {
-							$(showroute).html('Проложить маршрут').removeClass('disabled');
+						setStatus(settings.text.routeError, function() {
+							$(showroute).html(settings.text.routeMake).removeClass('disabled');
 						}, 2000);
 					}
 				});
