@@ -14,6 +14,8 @@
 		var settings = {
 			// Route button (also displays status after click)
 			idRoute:	'#showroute',
+			// Build route automaticly
+			autoRoute:	false,
 			// Show balloon on load?
 			showPopup:	true,
 			// Google Maps settings — https://developers.google.com/maps/documentation/javascript/reference#MapOptions
@@ -105,17 +107,24 @@
 			
 			// Is browser support HTML 5 Geolocation API?
 			if (navigator.geolocation) {
-				showroute = $(settings.idRoute).css('display', 'inline-block');
-				// Set event at route generator button
-				$(showroute).bind('click', function(event) {
-					event.preventDefault();
-					if (!$(showroute).hasClass('disabled')) {
-						$(showroute).addClass('disabled').css('display', 'inline-block');
-						navigator.geolocation.getCurrentPosition(function(position) {
-							showRouteService(position);
-						});
-					}
-				});
+				// If route build automaticly
+				if (settings.autoRoute) {
+					navigator.geolocation.getCurrentPosition(function(position) {
+						showRouteService(position);
+					});
+				} else {
+					showroute = $(settings.idRoute).css('display', 'inline-block');
+					// Set event at route generator button
+					$(showroute).bind('click', function(event) {
+						event.preventDefault();
+						if (!$(showroute).hasClass('disabled')) {
+							$(showroute).addClass('disabled').css('display', 'inline-block');
+							navigator.geolocation.getCurrentPosition(function(position) {
+								showRouteService(position);
+							});
+						}
+					});
+				}
 			}
 			
 			// Build route
